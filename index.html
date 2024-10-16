@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to Struct</title>
+    <style>
+        #download-btn {
+            display: none; /* 最初はボタンを非表示 */
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload CSV to Generate Struct</h1>
+    <input type="file" id="file-input" accept=".csv">
+    <a id="download-btn" href="#" download="struct_output.txt">Download Struct as Text</a>
+    <pre id="output"></pre>
+
+    <script src="./index.js" type="module"></script>
+</body>
+</html>
