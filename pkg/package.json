@@ -1,0 +1,15 @@
+{
+  "name": "rust-struct-creator-wasm",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "rust_struct_creator_wasm_bg.wasm",
+    "rust_struct_creator_wasm.js",
+    "rust_struct_creator_wasm.d.ts"
+  ],
+  "main": "rust_struct_creator_wasm.js",
+  "types": "rust_struct_creator_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
