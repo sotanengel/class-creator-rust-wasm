@@ -8,9 +8,14 @@
     <!-- Prism.js JS for syntax highlighting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+    <script src="./index.js" type="module"></script>
 
-    <title>CSV to Struct</title>
+    <title>定義書ClassコードコンバータWASM</title>
     <style>
+      h1{
+        text-align: center;
+      }
+
       #download-btn {
         display: none; /* 最初はボタンを非表示 */
         padding: 10px 20px; /* ボタンの内側の余白 */
@@ -37,12 +42,11 @@
     </style>  
 </head>
 <body>
-    <h1>Upload CSV to Generate Struct</h1>
+    <h1 class="center">定義書ClassコードコンバータWASM</h1>
     <input type="file" id="file-input" accept=".csv">
     <!-- Code block for displaying Rust code -->
     <pre id="code-block"><code id="output" class="language-rust"></code></pre>
 
-    <script src="./js/index.js" type="module"></script>
     <a id="download-btn" href="#" download="struct_output.txt">Download Program file!</a>
 </body>
 </html>
