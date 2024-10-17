@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/prism.css">
+    <script src="./js/prism.js" defer></script>
+
     <title>CSV to Struct</title>
     <style>
         #download-btn {
             display: none; /* 最初はボタンを非表示 */
+        }
+        #code-block {
+          display: none; /* 初期状態でコードブロックを非表示 */
         }
     </style>
 </head>
@@ -14,8 +20,14 @@
     <h1>Upload CSV to Generate Struct</h1>
     <input type="file" id="file-input" accept=".csv">
     <a id="download-btn" href="#" download="struct_output.txt">Download Struct as Text</a>
-    <pre id="output"></pre>
 
-    <script src="./index.js" type="module"></script>
+    <!-- Code block for displaying Rust code -->
+    <pre id="code-block"><code id="output" class="language-rust"></code></pre>
+
+    <script src="./js/index.js" type="module"></script>
+
+    <!-- Prism.js JS for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
 </body>
 </html>
