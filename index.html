@@ -5,55 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/prism.css">
     <script src="./js/prism.js" defer></script>
-    <!-- Prism.js JS for syntax highlighting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
     <script src="./index.js" type="module"></script>
 
     <title>定義書ClassコードコンバータWASM</title>
     <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8; /* 背景を薄い青に */
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            flex-direction: column; /* 縦に並べる */
+            min-height: 100vh; /* ビューポートの高さを100%に */
+        }
+
+        header {
+            background-color: #0056b3; /* ヘッダーの背景色を濃い青に */
+            color: white; /* ヘッダーの文字色を白に */
+            padding: 15px 20px; /* ヘッダーの内側の余白 */
+            margin-bottom: 20px; /* ヘッダーの下にマージンを追加 */
+        }
+
         h1 {
-            text-align: center;
+            margin: 0; /* マージンを0に */
+        }
+
+        main {
+            padding: 20px; /* メインコンテンツの余白 */
+            flex: 1; /* メインコンテンツが残りのスペースを埋める */
         }
 
         #file-input {
-            display: block; /* ブロック要素にする */
-            margin: 20px auto; /* 上下に20px、左右自動で中央に配置 */
-            padding: 10px; /* パディングを追加 */
-            font-size: 16px; /* フォントサイズ */
+          display: block; /* ブロック要素にする */
+          margin: 20px auto; /* 上下に20px、左右自動で中央に配置 */
+          padding: 10px; /* パディングを追加 */
+          font-size: 16px; /* フォントサイズ */
+        }
+
+        #file-input:hover {
+            border-color: #003d7a; /* ホバー時のボーダー色をさらに濃く */
         }
 
         #download-btn {
-            display: none; /* 最初はボタンを非表示 */
-            padding: 10px 20px; /* ボタンの内側の余白 */
-            font-size: 16px; /* フォントサイズ */
-            color: white; /* テキストの色 */
-            background-color: #007bff; /* ボタンの背景色 */
-            border: none; /* ボーダーを無くす */
-            border-radius: 5px; /* ボタンの角を丸くする */
-            text-decoration: none; /* 下線を消す */
-            cursor: pointer; /* カーソルをポインターに */
-            transition: background-color 0.3s; /* ホバー時の背景色変更のアニメーション */
-            text-align: center; /* テキストを中央寄せ */
-            font-family: Arial, sans-serif; /* フォントをArialに設定 */
-            font-weight: bold; /* フォントを太字に設定 */
+            display: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff; /* ボタンの色を青に */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 10px; /* ボタンのマージン調整 */
         }
-    
+
         #download-btn:hover {
             background-color: #0056b3; /* ホバー時の背景色 */
+            transform: translateY(-2px); /* 浮き上がる効果 */
         }
-  
+
         #code-block {
-            display: none; /* 初期状態でコードブロックを非表示 */
+            display: none;
+            background-color: white; /* コードブロックの背景色を白に */
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px; /* 幅を制限 */
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto; /* コードブロックを中央寄せ */
+        }
+
+        footer {
+            background-color: #0056b3; /* フッターの背景色を濃い青に */
+            color: white; /* フッターの文字色を白に */
+            padding: 15px 0; /* フッターの内側の余白 */
+            width: 100%; /* 幅を100%に */
+            text-align: center; /* テキストを中央寄せ */
+        }
+
+        footer a {
+            color: white; /* リンクの色を白に */
+            text-decoration: none; /* 下線を消す */
+            margin: 0 10px; /* リンクの左右のマージン */
         }
     </style>  
 </head>
 <body>
-    <h1 class="center">定義書ClassコードコンバータWASM</h1>
-    <input type="file" id="file-input" accept=".csv">
-    <!-- Code block for displaying Rust code -->
-    <pre id="code-block"><code id="output" class="language-rust"></code></pre>
-
-    <a id="download-btn" href="#" download="struct_output.txt">Download Program file!</a>
+    <header>
+        <h1>定義書Classコードコンバータ</h1>
+    </header>
+    <main>
+        <input type="file" id="file-input" accept=".csv">
+        <a id="download-btn" href="#" download="struct_output.txt">Download Program file!</a>
+        <pre id="code-block"><code id="output" class="language-rust"></code></pre>
+    </main>
+    <footer>
+        <p>
+            <a href="https://qiita.com/sotanengel" target="_blank">Quita</a> | 
+            <a href="https://github.com/sotanengel" target="_blank">GitHub</a>
+        </p>
+    </footer>
 </body>
 </html>
