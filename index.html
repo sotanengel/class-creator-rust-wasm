@@ -11,13 +11,30 @@
 
     <title>CSV to Struct</title>
     <style>
-        #download-btn {
-            display: none; /* 最初はボタンを非表示 */
-        }
-        #code-block {
-          display: none; /* 初期状態でコードブロックを非表示 */
-        }
-    </style>
+      #download-btn {
+        display: none; /* 最初はボタンを非表示 */
+        padding: 10px 20px; /* ボタンの内側の余白 */
+        font-size: 16px; /* フォントサイズ */
+        color: white; /* テキストの色 */
+        background-color: #007bff; /* ボタンの背景色 */
+        border: none; /* ボーダーを無くす */
+        border-radius: 5px; /* ボタンの角を丸くする */
+        text-decoration: none; /* 下線を消す */
+        cursor: pointer; /* カーソルをポインターに */
+        transition: background-color 0.3s; /* ホバー時の背景色変更のアニメーション */
+        text-align: center; /* テキストを中央寄せ */
+        font-family: Arial, sans-serif; /* フォントをArialに設定 */
+        font-weight: bold; /* フォントを太字に設定 */
+      }
+    
+      #download-btn:hover {
+          background-color: #0056b3; /* ホバー時の背景色 */
+      }
+  
+      #code-block {
+        display: none; /* 初期状態でコードブロックを非表示 */
+      }
+    </style>  
 </head>
 <body>
     <h1>Upload CSV to Generate Struct</h1>
