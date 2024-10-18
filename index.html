@@ -38,11 +38,20 @@
             flex: 1; /* メインコンテンツが残りのスペースを埋める */
         }
 
+        #rdd-format-link {
+            display: block; /* リンクをブロック要素にする */
+            padding: 10px; /* パディングを追加 */
+            font-size: 16px; /* フォントサイズ */
+            text-align: center; /* テキストを中央寄せ */
+            text-decoration: none; /* 下線を消す */
+            color: #0056b3; /* テキストの色を青に */
+        }
+
         #file-input {
-          display: block; /* ブロック要素にする */
-          margin: 20px auto; /* 上下に20px、左右自動で中央に配置 */
-          padding: 10px; /* パディングを追加 */
-          font-size: 16px; /* フォントサイズ */
+            display: block; /* ブロック要素にする */
+            margin: 20px auto; /* 上下に20px、左右自動で中央に配置 */
+            padding: 10px; /* パディングを追加 */
+            font-size: 16px; /* フォントサイズ */
         }
 
         #file-input:hover {
@@ -101,6 +110,7 @@
         <h1>定義書Classコードコンバータ</h1>
     </header>
     <main>
+        <a id="rdd-format-link" href="https://docs.google.com/spreadsheets/d/1AXVg4XjH29HAD4s9mgJJ-_7WFBCtXn3tweTK68ERBaI/edit?usp=sharing" target="_blank">定義書フォーマット(Google スプレッドシート)</a>
         <input type="file" id="file-input" accept=".csv">
         <pre id="code-block"><code id="output" class="language-rust"></code></pre>
         <a id="download-btn" href="#" download="struct_output.txt">生成コードのダウンロード!</a>
