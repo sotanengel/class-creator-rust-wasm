@@ -108,11 +108,18 @@
         <h1>定義書Classコードコンバータ</h1>
     </header>
     <main>
-        <a id="rdd-format-link" href="https://docs.google.com/spreadsheets/d/1AXVg4XjH29HAD4s9mgJJ-_7WFBCtXn3tweTK68ERBaI/edit?usp=sharing" target="_blank">定義書フォーマット(Google スプレッドシート)</a>
-        <input type="file" id="file-input" accept=".csv">
-        <pre id="code-block"><code id="output" class="language-rust"></code></pre>
-        <a id="download-btn" href="#" download="struct_output.txt">生成コードのダウンロード!</a>
-    </main>
+      <a id="rdd-format-link" href="https://docs.google.com/spreadsheets/d/1AXVg4XjH29HAD4s9mgJJ-_7WFBCtXn3tweTK68ERBaI/edit?usp=sharing" target="_blank">定義書フォーマット(Google スプレッドシート)</a>
+      <input type="file" id="file-input" accept=".csv">
+  
+      <!-- ラジオボタンで構造体のみか、コンストラクタを含むかを選択 -->
+      <div>
+          <label><input type="radio" name="impl-option" value="include" checked> 構造体 + コンストラクタ</label>
+          <label><input type="radio" name="impl-option" value="struct-only"> 構造体のみ</label>
+      </div>
+  
+      <pre id="code-block"><code id="output" class="language-rust"></code></pre>
+      <a id="download-btn" href="#" download="struct_output.txt">生成コードのダウンロード!</a>
+  </main>
     <footer>
         <p>
             <a href="https://qiita.com/sotanengel" target="_blank">Quita</a> | 

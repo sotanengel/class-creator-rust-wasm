@@ -2,15 +2,16 @@
 /* eslint-disable */
 /**
  * @param {string} csv_data
+ * @param {boolean} include_impl
  * @returns {string}
  */
-export function generate_struct_from_csv(csv_data: string): string;
+export function generate_struct_from_csv(csv_data: string, include_impl: boolean): string;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly generate_struct_from_csv: (a: number, b: number, c: number) => void;
+  readonly generate_struct_from_csv: (a: number, b: number, c: number, d: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;

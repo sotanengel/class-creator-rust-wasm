@@ -2,7 +2,7 @@ use wasm_bindgen::prelude::*;
 use csv::ReaderBuilder;
 
 #[wasm_bindgen]
-pub fn generate_struct_from_csv(csv_data: &str) -> String {
+pub fn generate_struct_from_csv(csv_data: &str, include_impl: bool) -> String {
     let mut rdr = ReaderBuilder::new()
         .has_headers(false)
         .from_reader(csv_data.as_bytes());
@@ -56,28 +56,30 @@ pub fn generate_struct_from_csv(csv_data: &str) -> String {
 
     // フィールドを追加
     struct_code.push_str(&fields.join("\n"));
-    struct_code.push_str("\n}\n\n");
+    struct_code.push_str("\n}\n");
 
-    // implブロックとnew関数を追加
-    struct_code.push_str(&format!("impl {} {{\n", struct_name));
-    struct_code.push_str("    fn new(");
+    // include_implがtrueの場合にのみimplブロックを追加
+    if include_impl {
+        struct_code.push_str(&format!("\nimpl {} {{\n", struct_name));
+        struct_code.push_str("    fn new(");
 
-    // new関数の引数リストを作成
-    let mut new_args = Vec::new();
-    for (physical_name, field_type) in &field_names {
-        new_args.push(format!("{}: {}", physical_name, field_type));
+        // new関数の引数リストを作成
+        let mut new_args = Vec::new();
+        for (physical_name, field_type) in &field_names {
+            new_args.push(format!("{}: {}", physical_name, field_type));
+        }
+        struct_code.push_str(&new_args.join(", "));
+        struct_code.push_str(&format!(") -> {} {{\n", struct_name));
+
+        // 構造体のフィールドを初期化するコードを追加
+        struct_code.push_str(&format!("        {} {{\n", struct_name));
+        for (physical_name, _) in &field_names {
+            struct_code.push_str(&format!("            {},\n", physical_name));
+        }
+        struct_code.push_str("        }\n");
+        struct_code.push_str("    }\n");
+        struct_code.push_str("}\n");
     }
-    struct_code.push_str(&new_args.join(", "));
-    struct_code.push_str(&format!(") -> {} {{\n", struct_name));
-
-    // 構造体のフィールドを初期化するコードを追加
-    struct_code.push_str(&format!("        {} {{\n", struct_name));
-    for (physical_name, _) in &field_names {
-        struct_code.push_str(&format!("            {},\n", physical_name));
-    }
-    struct_code.push_str("        }\n");
-    struct_code.push_str("    }\n");
-    struct_code.push_str("}\n");
 
     struct_code
 }

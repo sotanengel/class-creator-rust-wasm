@@ -84,16 +84,17 @@ function getStringFromWasm0(ptr, len) {
 }
 /**
  * @param {string} csv_data
+ * @param {boolean} include_impl
  * @returns {string}
  */
-export function generate_struct_from_csv(csv_data) {
+export function generate_struct_from_csv(csv_data, include_impl) {
     let deferred2_0;
     let deferred2_1;
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passStringToWasm0(csv_data, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        wasm.generate_struct_from_csv(retptr, ptr0, len0);
+        wasm.generate_struct_from_csv(retptr, ptr0, len0, include_impl);
         var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
         var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
         deferred2_0 = r0;
