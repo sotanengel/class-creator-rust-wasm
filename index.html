@@ -101,6 +101,27 @@
             text-decoration: none; /* 下線を消す */
             margin: 0 10px; /* リンクの左右のマージン */
         }
+        #radio-buttons-container {
+          display: flex;
+          justify-content: center; /* 中央寄せ */
+          align-items: center;
+          gap: 10px; /* 要素間の余白 */
+          margin: 20px 0;
+        }
+      
+        #re-output-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+      
+        #re-output-btn:hover {
+            background-color: #0056b3;
+        }      
     </style>  
 </head>
 <body>
@@ -111,15 +132,16 @@
       <a id="rdd-format-link" href="https://docs.google.com/spreadsheets/d/1AXVg4XjH29HAD4s9mgJJ-_7WFBCtXn3tweTK68ERBaI/edit?usp=sharing" target="_blank">定義書フォーマット(Google スプレッドシート)</a>
       <input type="file" id="file-input" accept=".csv">
   
-      <!-- ラジオボタンで構造体のみか、コンストラクタを含むかを選択 -->
-      <div>
+      <!-- ラジオボタンと再出力ボタンを中央寄せ -->
+      <div id="radio-buttons-container">
           <label><input type="radio" name="impl-option" value="include" checked> 構造体 + コンストラクタ</label>
           <label><input type="radio" name="impl-option" value="struct-only"> 構造体のみ</label>
+          <button id="re-output-btn">再出力</button>
       </div>
   
       <pre id="code-block"><code id="output" class="language-rust"></code></pre>
       <a id="download-btn" href="#" download="struct_output.txt">生成コードのダウンロード!</a>
-  </main>
+    </main>  
     <footer>
         <p>
             <a href="https://qiita.com/sotanengel" target="_blank">Quita</a> | 

@@ -1,61 +1,91 @@
 import init, { generate_struct_from_csv } from './pkg/rust_struct_creator_wasm.js';
 
-window.addEventListener('DOMContentLoaded', (event) => {
+window.addEventListener('DOMContentLoaded', async (event) => {
     const fileInput = document.getElementById('file-input');
     const output = document.getElementById('output');
     const codeBlock = document.getElementById('code-block');
     const downloadBtn = document.getElementById('download-btn');
+    const reOutputBtn = document.getElementById('re-output-btn');
 
-    // CSVファイルの読み込みと構造体生成
+    let csvContent = '';
+
+    // クエリパラメータからラジオボタンの状態を取得
+    const params = new URLSearchParams(window.location.search);
+    const implOption = params.get('impl-option') || 'include'; // デフォルトは 'include'
+
+    // ラジオボタンの選択状態をセット
+    document.querySelector(`input[name="impl-option"][value="${implOption}"]`).checked = true;
+
+    // ファイル選択時にCSVを読み込む
     if (fileInput) {
-      fileInput.addEventListener('change', async function() {
-          const reader = new FileReader();
-  
-          reader.onload = async function(event) {
-              const csvContent = event.target.result;
+        fileInput.addEventListener('change', async function() {
+            const reader = new FileReader();
+    
+            reader.onload = async function(event) {
+                csvContent = event.target.result;
+                await generateStruct();
+            };
+    
+            reader.readAsText(this.files[0]);
+        });
+    }
 
-              // Wasmモジュールを初期化
-              await init();
+    // ラジオボタンの状態をクエリパラメータに保存
+    const saveRadioStateToURL = () => {
+        const selectedValue = document.querySelector('input[name="impl-option"]:checked').value;
+        const newParams = new URLSearchParams(window.location.search);
+        newParams.set('impl-option', selectedValue);
+        history.replaceState(null, '', `?${newParams.toString()}`); // URLを更新
+    };
 
-              // ラジオボタンの選択を取得
-              const includeImpl = document.querySelector('input[name="impl-option"]:checked').value === 'include';
+    // 構造体生成の処理
+    const generateStruct = async () => {
+        if (!csvContent) return;
 
-              // Wasm関数を呼び出してCSVから構造体を生成
-              let structCode;
-              try {
-                  structCode = generate_struct_from_csv(csvContent, includeImpl);
-                  console.log('Generated structCode:', structCode); // 確認用のログ
-              } catch (error) {
-                  console.error('Error generating struct:', error);
-                  return;
-              }
+        await init();
 
-              output.textContent = structCode;
+        // クエリパラメータから現在のラジオボタンの選択状態を取得
+        const includeImpl = document.querySelector('input[name="impl-option"]:checked').value === 'include';
 
-              // outputの内容が空かどうかチェックして非表示にする
-              if (!structCode || structCode.trim() === "") {
-                  codeBlock.style.display = 'none'; // 空なら非表示
-              } else {
-                  codeBlock.style.display = 'block'; // 非表示を解除
-                  // Prism.jsでハイライトを適用
-                  Prism.highlightElement(output);
-              }
+        // CSVから構造体を生成
+        let structCode;
+        try {
+            structCode = generate_struct_from_csv(csvContent, includeImpl);
+        } catch (error) {
+            console.error('Error generating struct:', error);
+            return;
+        }
 
-              // CSVの最初の行から構造体名を取得（1行目が構造体名と仮定）
-              const lines = csvContent.split('\n');
-              const structName = lines[0].split(',')[1].trim(); // カンマで分割して1つ目を取得
+        output.textContent = structCode;
 
-              // テキストファイル用のBlobを生成
-              const blob = new Blob([structCode], { type: 'text/plain' });
-              const url = URL.createObjectURL(blob);
+        // 出力の表示/非表示
+        if (!structCode || structCode.trim() === "") {
+            codeBlock.style.display = 'none';
+        } else {
+            codeBlock.style.display = 'block';
+            Prism.highlightElement(output);
+        }
 
-              // ダウンロードリンクを更新
-              downloadBtn.href = url;
-              downloadBtn.download = `${structName}.rs`; // 構造体名をファイル名に設定
-              downloadBtn.style.display = 'block'; // ボタンを表示
-          };
-  
-          reader.readAsText(this.files[0]);
-      });
-  }  
+        // ダウンロードリンクの設定
+        const lines = csvContent.split('\n');
+        const structName = lines[0].split(',')[1].trim();
+        const blob = new Blob([structCode], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        downloadBtn.href = url;
+        downloadBtn.download = `${structName}.rs`;
+        downloadBtn.style.display = 'block';
+    };
+
+    // 再出力ボタンのクリックイベント
+    if (reOutputBtn) {
+        reOutputBtn.addEventListener('click', async () => {
+            saveRadioStateToURL(); // ラジオボタンの状態をURLに保存
+            await generateStruct(); // 再度生成
+        });
+    }
+
+    // ラジオボタンの変更時にもURLを更新
+    document.querySelectorAll('input[name="impl-option"]').forEach((radio) => {
+        radio.addEventListener('change', saveRadioStateToURL);
+    });
 });
