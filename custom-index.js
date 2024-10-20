@@ -9,9 +9,11 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
     let csvContent = '';
 
-    // ラジオボタンの状態を取得
+    // クエリパラメータからラジオボタンの状態を取得
     const params = new URLSearchParams(window.location.search);
-    const implOption = params.get('impl-option') || 'include';
+    const implOption = params.get('impl-option') || 'include'; // デフォルトは 'include'
+
+    // ラジオボタンの選択状態をセット
     document.querySelector(`input[name="impl-option"][value="${implOption}"]`).checked = true;
 
     // ファイル選択時にCSVを読み込む
@@ -27,6 +29,14 @@ window.addEventListener('DOMContentLoaded', async (event) => {
             reader.readAsText(this.files[0]);
         });
     }
+
+    // ラジオボタンの状態をクエリパラメータに保存
+    const saveRadioStateToURL = () => {
+      const selectedValue = document.querySelector('input[name="impl-option"]:checked').value;
+      const newParams = new URLSearchParams(window.location.search);
+      newParams.set('impl-option', selectedValue);
+      history.replaceState(null, '', `?${newParams.toString()}`); // URLを更新
+  };
 
     // 構造体生成の処理
     const generateStruct = async () => {
@@ -95,8 +105,14 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
     // 再出力ボタンのクリックイベント
     if (reOutputBtn) {
-        reOutputBtn.addEventListener('click', async () => {
-            await generateStruct();
-        });
-    }
+      reOutputBtn.addEventListener('click', async () => {
+          saveRadioStateToURL(); // ラジオボタンの状態をURLに保存
+          await generateStruct(); // 再度生成
+      });
+  }
+
+  // ラジオボタンの変更時にもURLを更新
+  document.querySelectorAll('input[name="impl-option"]').forEach((radio) => {
+      radio.addEventListener('change', saveRadioStateToURL);
+  });
 });
