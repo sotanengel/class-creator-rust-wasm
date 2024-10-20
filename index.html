@@ -4,161 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/prism.css">
+    <link rel="stylesheet" href="./css/styles.css">
     <script src="./js/prism.js" defer></script>
     <script src="./index.js" type="module"></script>
 
-    <title>定義書ClassコードコンバータWASM</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f4f8;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        header {
-            background-color: #0056b3;
-            color: white;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        main {
-            padding: 20px;
-            flex: 1;
-        }
-
-        #rdd-format-link {
-            display: block;
-            padding: 10px;
-            font-size: 16px;
-            text-align: center;
-            text-decoration: none;
-            color: #0056b3;
-        }
-
-        #file-input {
-            display: block;
-            margin: 20px auto;
-            padding: 10px;
-            font-size: 16px;
-        }
-
-        #file-input:hover {
-            border-color: #003d7a;
-        }
-
-        #download-btn {
-            display: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.3s, transform 0.3s;
-            margin-top: 10px;
-        }
-
-        #download-btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-
-        #code-block {
-            display: none;
-            background-color: white;
-            border-radius: 5px;
-            padding: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 800px;
-            margin-top: 20px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        footer {
-            background-color: #0056b3;
-            color: white;
-            padding: 15px 0;
-            width: 100%;
-            text-align: center;
-        }
-
-        footer a {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-
-        #radio-buttons-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        #re-output-btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #re-output-btn:hover {
-            background-color: #0056b3;
-        }
-
-        /* タブのスタイル */
-        .tabs {
-          display: flex;
-          justify-content: space-evenly; /* 均等に配置 */
-          background-color: #f0f4f8; /* タブの背景色 */
-          padding: 10px 0;
-        }
-
-        .tab {
-          flex: 1; /* 横幅いっぱいに広げる */
-          text-align: center;
-          padding: 15px;
-          font-size: 18px;
-          cursor: pointer;
-          background-color: #0056b3;
-          color: white;
-          transition: background-color 0.3s;
-        }
-
-        .tab.active {
-          background-color: #333333;
-        }
-
-        .tab[data-url="custom-index.html"] {
-          background-color: #4B0082; /* カスタムCSV変換の色を赤に */
-        }
-
-        .tab[data-url="custom-index.html"].active {
-          background-color: darkred; /* カスタムCSV変換のアクティブ時の色を濃い赤に */
-        }
-    </style>
+    <title>定義書RustコードコンバータWASM</title>
+    <meta name="description" content="システム定義書からRustの構造体を自動生成するサイトです。このページではサンプルのCSVから定義書を作成することgできます。" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 </head>
 <body>
     <header>
-        <h1>定義書Classコードコンバータ</h1>
+        <meta charset="utf-8" />
+        <h1>定義書RustコードコンバータWASM</h1>
     </header>
     <main>
         <!-- タブメニュー -->
@@ -210,7 +67,22 @@
                   activeContent.classList.add('active');
               }
           });
-      });      
+      });
+
+       // フッターを読み込む関数
+       function loadFooter() {
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+            })
+            .catch(error => console.error('Error loading footer:', error));
+    }
+
+    // ページが読み込まれたときにフッターを読み込む
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFooter();
+    });
     </script>
 </body>
 </html>
