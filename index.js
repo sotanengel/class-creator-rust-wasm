@@ -9,17 +9,11 @@ window.addEventListener('DOMContentLoaded', async (event) => {
 
     let csvContent = '';
 
-    // URLパラメータを取得
+    // クエリパラメータからラジオボタンの状態を取得
     const params = new URLSearchParams(window.location.search);
-    const structNamePosition = params.get('struct_name_position') || '1-2'; // デフォルト値
-    const structDetailPosition = params.get('struct_detail_position') || '2-2'; // デフォルト値
-    const logicalNamePosition = params.get('logical_name_position') || '5-2'; // デフォルト値
-    const physicalNamePosition = params.get('physical_name_position') || '5-3'; // デフォルト値
-    const typePosition = params.get('type_position') || '5-4'; // デフォルト値
-    const detailPosition = params.get('detail_position') || '5-5'; // デフォルト値
+    const implOption = params.get('impl-option') || 'include'; // デフォルトは 'include'
 
-    // ラジオボタンの状態を取得
-    const implOption = params.get('impl-option') || 'include';
+    // ラジオボタンの選択状態をセット
     document.querySelector(`input[name="impl-option"][value="${implOption}"]`).checked = true;
 
     // ファイル選択時にCSVを読み込む
@@ -36,6 +30,14 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         });
     }
 
+    // ラジオボタンの状態をクエリパラメータに保存
+    const saveRadioStateToURL = () => {
+        const selectedValue = document.querySelector('input[name="impl-option"]:checked').value;
+        const newParams = new URLSearchParams(window.location.search);
+        newParams.set('impl-option', selectedValue);
+        history.replaceState(null, '', `?${newParams.toString()}`); // URLを更新
+    };
+
     // 構造体生成の処理
     const generateStruct = async () => {
         if (!csvContent) return;
@@ -45,27 +47,10 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         // クエリパラメータから現在のラジオボタンの選択状態を取得
         const includeImpl = document.querySelector('input[name="impl-option"]:checked').value === 'include';
 
-        // 座標を取得
-        const structNamePos = structNamePosition.split('-').map(Number);
-        const structDetailPos = structDetailPosition.split('-').map(Number);
-        const logicalNamePos = logicalNamePosition.split('-').map(Number);
-        const physicalNamePos = physicalNamePosition.split('-').map(Number);
-        const typePos = typePosition.split('-').map(Number);
-        const detailPos = detailPosition.split('-').map(Number);
-
         // CSVから構造体を生成
         let structCode;
         try {
-            structCode = generate_struct_from_csv(
-                csvContent,
-                includeImpl,
-                [structNamePos[0], structNamePos[1]],
-                [structDetailPos[0], structDetailPos[1]],
-                [logicalNamePos[0], logicalNamePos[1]],
-                [physicalNamePos[0], physicalNamePos[1]],
-                [typePos[0], typePos[1]],
-                [detailPos[0], detailPos[1]]
-            );
+            structCode = generate_struct_from_csv(csvContent, includeImpl);
         } catch (error) {
             console.error('Error generating struct:', error);
             return;
@@ -89,25 +74,18 @@ window.addEventListener('DOMContentLoaded', async (event) => {
         downloadBtn.href = url;
         downloadBtn.download = `${structName}.rs`;
         downloadBtn.style.display = 'block';
-
-        // コンソールに出力
-        lines.forEach((line, index) => {
-            const columns = line.split(',');
-            if (columns.length > 1) {
-                console.log(`struct_name_position: ${structNamePos[0]}-${structNamePos[1]}`);
-                console.log(`struct_detail_position: ${structDetailPos[0]}-${structDetailPos[1]}`);
-                console.log(`logical_name_position: ${logicalNamePos[0]}-${logicalNamePos[1]}`);
-                console.log(`physical_name_position: ${physicalNamePos[0]}-${physicalNamePos[1]}`);
-                console.log(`type_position: ${typePos[0]}-${typePos[1]}`);
-                console.log(`detail_position: ${detailPos[0]}-${detailPos[1]}`);
-            }
-        });
     };
 
     // 再出力ボタンのクリックイベント
     if (reOutputBtn) {
         reOutputBtn.addEventListener('click', async () => {
-            await generateStruct();
+            saveRadioStateToURL(); // ラジオボタンの状態をURLに保存
+            await generateStruct(); // 再度生成
         });
     }
+
+    // ラジオボタンの変更時にもURLを更新
+    document.querySelectorAll('input[name="impl-option"]').forEach((radio) => {
+        radio.addEventListener('change', saveRadioStateToURL);
+    });
 });
