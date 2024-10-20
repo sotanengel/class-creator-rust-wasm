@@ -305,7 +305,7 @@
 
     <script>
       const tabs = document.querySelectorAll('.tab');
-  
+    
       tabs.forEach(tab => {
           tab.addEventListener('click', () => {
               if (tab.dataset.url) {
@@ -315,23 +315,23 @@
                   // 通常のタブ切り替え処理
                   tabs.forEach(t => t.classList.remove('active'));
                   tab.classList.add('active');
-          
+    
                   document.querySelectorAll('.tab-content').forEach(content => {
                       content.classList.remove('active');
                   });
-          
+    
                   const activeContent = document.getElementById(tab.dataset.tab);
                   activeContent.classList.add('active');
               }
           });
       });
-  
+    
       // 入力欄の値をURLパラメータに追加する関数
       function updateUrlParameters() {
           const params = new URLSearchParams();
           const rows = document.querySelectorAll('tbody tr');
           let hasRequiredParams = true;
-  
+    
           rows.forEach((row, index) => {
               const inputs = row.querySelectorAll('input[type="number"]');
               if (inputs.length === 2) {
@@ -345,26 +345,26 @@
                       'type_position',
                       'detail_position'
                   ][index];
-  
+    
                   // 必須パラメータがすべて入力されているかチェック
                   if (['struct_name_position', 'logical_name_position', 'physical_name_position', 'type_position'].includes(paramName) && (!rowNumber || !columnNumber)) {
                       hasRequiredParams = false;
                   }
-  
+    
                   if (rowNumber && columnNumber) {
                       params.set(paramName, `${rowNumber}-${columnNumber}`);
                   }
               }
           });
-  
+    
           // URLを更新
           window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
-  
+    
           // ファイル選択ボタンの表示制御
           const fileInput = document.getElementById('file-input');
           const message = document.getElementById('param-message');
           const favoriteMessage = document.getElementById('fukidashi');
-          
+    
           if (hasRequiredParams) {
               fileInput.style.display = 'block';
               message.style.display = 'none';
@@ -375,69 +375,91 @@
               favoriteMessage.style.display = 'none'; // 吹き出しメッセージを非表示
           }
       }
-  
+    
       // 入力欄の変更イベントリスナーを追加
       const numberInputs = document.querySelectorAll('input[type="number"]');
       numberInputs.forEach(input => {
-          input.addEventListener('input', updateUrlParameters);
+          input.addEventListener('input', (event) => {
+              updateUrlParameters();
+              syncRowNumbers(event.target); // 同時に他の行番号を同期
+          });
       });
 
+      // 特定の入力が変更されたときに他の行番号を同期する関数
+      function syncRowNumbers(changedInput) {
+          const rows = document.querySelectorAll('tbody tr');
+          const changedRowIndex = Array.from(rows).findIndex(row => row.querySelector('input[type="number"]') === changedInput);
+
+          // 論理名、物理名、型、詳細の開始位置の行インデックス
+          const syncedIndices = [2, 3, 4, 5]; // それぞれの行番号
+
+          // 変更された行の行番号を取得
+          const newValue = changedInput.value;
+
+          // 同期が必要な行を更新
+          syncedIndices.forEach(index => {
+              const row = rows[index];
+              const inputs = row.querySelectorAll('input[type="number"]');
+              inputs[0].value = newValue; // 行番号を更新
+          });
+      }
+    
       // ページ読み込み時にURLパラメータから入力欄を設定する関数
       function setInputValuesFromUrl() {
-        const params = new URLSearchParams(window.location.search);
-        const rowInputs = document.querySelectorAll('tbody tr');
-        let hasRequiredParams = true;
-
-        rowInputs.forEach((row, index) => {
-            const inputs = row.querySelectorAll('input[type="number"]');
-            const paramName = [
-                'struct_name_position',
-                'struct_detail_position',
-                'logical_name_position',
-                'physical_name_position',
-                'type_position',
-                'detail_position'
-            ][index];
-
-            if (params.has(paramName)) {
-                const value = params.get(paramName);
-                const [rowNumber, columnNumber] = value.split('-');
-
-                if (inputs.length === 2) {
-                    inputs[0].value = rowNumber; // 行番号
-                    inputs[1].value = columnNumber; // 列番号
-                }
-
-                // 必須パラメータのチェック
-                if (['struct_name_position', 'logical_name_position', 'physical_name_position', 'type_position'].includes(paramName) && (!rowNumber || !columnNumber)) {
-                    hasRequiredParams = false;
-                }
-            }
-        });
-
-        // ファイル選択ボタンの表示制御
-        const fileInput = document.getElementById('file-input');
-        const message = document.getElementById('param-message');
-        const favoriteMessage = document.getElementById('fukidashi');
-
-        if (hasRequiredParams) {
-            fileInput.style.display = 'block';
-            message.style.display = 'none';
-            favoriteMessage.style.display = 'block'; // 吹き出しメッセージを表示
-        } else {
-            fileInput.style.display = 'none';
-            message.style.display = 'block';
-            favoriteMessage.style.display = 'none'; // 吹き出しメッセージを非表示
-        }
-
-        // URLを更新
-        updateUrlParameters();
+          const params = new URLSearchParams(window.location.search);
+          const rowInputs = document.querySelectorAll('tbody tr');
+          let hasRequiredParams = true;
+    
+          rowInputs.forEach((row, index) => {
+              const inputs = row.querySelectorAll('input[type="number"]');
+              const paramName = [
+                  'struct_name_position',
+                  'struct_detail_position',
+                  'logical_name_position',
+                  'physical_name_position',
+                  'type_position',
+                  'detail_position'
+              ][index];
+    
+              if (params.has(paramName)) {
+                  const value = params.get(paramName);
+                  const [rowNumber, columnNumber] = value.split('-');
+    
+                  if (inputs.length === 2) {
+                      inputs[0].value = rowNumber; // 行番号
+                      inputs[1].value = columnNumber; // 列番号
+                  }
+    
+                  // 必須パラメータのチェック
+                  if (['struct_name_position', 'logical_name_position', 'physical_name_position', 'type_position'].includes(paramName) && (!rowNumber || !columnNumber)) {
+                      hasRequiredParams = false;
+                  }
+              }
+          });
+    
+          // ファイル選択ボタンの表示制御
+          const fileInput = document.getElementById('file-input');
+          const message = document.getElementById('param-message');
+          const favoriteMessage = document.getElementById('fukidashi');
+    
+          if (hasRequiredParams) {
+              fileInput.style.display = 'block';
+              message.style.display = 'none';
+              favoriteMessage.style.display = 'block'; // 吹き出しメッセージを表示
+          } else {
+              fileInput.style.display = 'none';
+              message.style.display = 'block';
+              favoriteMessage.style.display = 'none'; // 吹き出しメッセージを非表示
+          }
+    
+          // URLを更新
+          updateUrlParameters();
       }
-
+    
       // ページが読み込まれたときに入力欄を設定
       document.addEventListener('DOMContentLoaded', () => {
-        setInputValuesFromUrl();
+          setInputValuesFromUrl();
       });
-  </script>  
+    </script>    
 </body>
 </html>
