@@ -178,6 +178,41 @@
             margin-top: 10px;
             display: none; /* 初期状態は非表示 */
         }
+
+        #fukidashi {
+          position: relative;
+          width: fit-content;
+          padding: 12px 16px;
+          border: 2px solid #333333;
+          border-radius: 4px;
+          margin: 0 auto; /* 中央揃え */
+        }
+
+        #fukidashi::before {
+          content: "";
+          position: absolute;
+          bottom: -5px;
+          left: 50%;
+          width: 15px;
+          height: 15px;
+          box-sizing: border-box;
+          background-color: #ffffff; /* 背景色と同じ色を指定 */
+          rotate: 135deg;
+          translate: -50%;
+        }
+        #fukidashi::after {
+          content: "";
+          position: absolute;
+          bottom: -8px;
+          left: 50%;
+          width: 15px;
+          height: 15px;
+          box-sizing: border-box;
+          border: 2px solid;
+          border-color: #333333 #333333 transparent transparent;
+          rotate: 135deg;
+          translate: -50%;
+        }        
     </style>
 </head>
 <body>
@@ -193,43 +228,48 @@
 
         <!-- サンプルCSV変換タブ内容 -->
         <div id="sample" class="tab-content active">
+
+          <div id="fukidashi" style="display:none; position: relative;">
+            このURLをお気に入り登録すると次回以降開始位置の入力が省略できます👀
+          </div>
+
             <!-- テーブルの追加 -->
             <table>
                 <thead>
                     <tr>
-                        <th>項目名</th>
-                        <th>行</th>
-                        <th>列</th>
+                        <th>開始セル位置</th>
+                        <th>行(半角数字)</th>
+                        <th>列(半角数字)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>構造体名のセルの位置</td>
+                        <td>構造体名*</td>
                         <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
                         <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
                     </tr>
                     <tr>
-                        <td>構造体詳細のセルの位置</td>
+                        <td>構造体詳細</td>
                         <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
                         <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
                     </tr>
                     <tr>
-                        <td>論理名のセルの開始位置</td>
+                        <td>論理名の開始位置*</td>
                         <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
                         <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
                     </tr>
                     <tr>
-                        <td>物理名のセルの開始位置</td>
+                        <td>物理名の開始位置*</td>
                         <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
                         <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
                     </tr>
                     <tr>
-                        <td>型のセルの開始位置</td>
+                        <td>型の開始位置*</td>
                         <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
                         <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
                     </tr>
                     <tr>
-                        <td>詳細のセルの開始位置</td>
+                        <td>詳細の開始位置</td>
                         <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
                         <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
                     </tr>
@@ -237,8 +277,13 @@
             </table>
 
             <div id="param-message" style="display:none; color: red; text-align: center;">
-              上記のパラメータを入力してください
+              構造体名・論理名・物理名・型のセルの位置を記載してください
             </div>
+
+            <div id="fukidashi" style="display:none; position: relative;">
+              今、URLをお気に入りすると次回以降セル情報の省略できます👀
+            </div>      
+    
             <input type="file" id="file-input" accept=".csv" style="display:none;">
   
             <div id="radio-buttons-container">
@@ -318,13 +363,16 @@
           // ファイル選択ボタンの表示制御
           const fileInput = document.getElementById('file-input');
           const message = document.getElementById('param-message');
+          const favoriteMessage = document.getElementById('fukidashi');
           
           if (hasRequiredParams) {
               fileInput.style.display = 'block';
               message.style.display = 'none';
+              favoriteMessage.style.display = 'block'; // 吹き出しメッセージを表示
           } else {
               fileInput.style.display = 'none';
               message.style.display = 'block';
+              favoriteMessage.style.display = 'none'; // 吹き出しメッセージを非表示
           }
       }
   
@@ -332,6 +380,63 @@
       const numberInputs = document.querySelectorAll('input[type="number"]');
       numberInputs.forEach(input => {
           input.addEventListener('input', updateUrlParameters);
+      });
+
+      // ページ読み込み時にURLパラメータから入力欄を設定する関数
+      function setInputValuesFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const rowInputs = document.querySelectorAll('tbody tr');
+        let hasRequiredParams = true;
+
+        rowInputs.forEach((row, index) => {
+            const inputs = row.querySelectorAll('input[type="number"]');
+            const paramName = [
+                'struct_name_position',
+                'struct_detail_position',
+                'logical_name_position',
+                'physical_name_position',
+                'type_position',
+                'detail_position'
+            ][index];
+
+            if (params.has(paramName)) {
+                const value = params.get(paramName);
+                const [rowNumber, columnNumber] = value.split('-');
+
+                if (inputs.length === 2) {
+                    inputs[0].value = rowNumber; // 行番号
+                    inputs[1].value = columnNumber; // 列番号
+                }
+
+                // 必須パラメータのチェック
+                if (['struct_name_position', 'logical_name_position', 'physical_name_position', 'type_position'].includes(paramName) && (!rowNumber || !columnNumber)) {
+                    hasRequiredParams = false;
+                }
+            }
+        });
+
+        // ファイル選択ボタンの表示制御
+        const fileInput = document.getElementById('file-input');
+        const message = document.getElementById('param-message');
+        const favoriteMessage = document.getElementById('fukidashi');
+
+        if (hasRequiredParams) {
+            fileInput.style.display = 'block';
+            message.style.display = 'none';
+            favoriteMessage.style.display = 'block'; // 吹き出しメッセージを表示
+        } else {
+            fileInput.style.display = 'none';
+            message.style.display = 'block';
+            favoriteMessage.style.display = 'none'; // 吹き出しメッセージを非表示
+        }
+
+        // URLを更新
+        updateUrlParameters();
+      }
+
+      // ページが読み込まれたときに入力欄を設定
+      document.addEventListener('DOMContentLoaded', () => {
+        setInputValuesFromUrl();
       });
   </script>  
 </body>
