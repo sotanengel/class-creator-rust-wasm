@@ -10,6 +10,9 @@ js-sys = "0.3"
 csv = "1.1"
 wasm-bindgen-futures = "0.4"
 serde = "1.0.210"
+itertools = "0.13.0"
+console_log = "1.0.0"
+console_error_panic_hook = "0.1.7"
 
 [lib]
 crate-type = ["cdylib"]
