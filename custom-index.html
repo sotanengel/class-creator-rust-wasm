@@ -126,33 +126,57 @@
 
         /* タブのスタイル */
         .tabs {
-          display: flex;
-          justify-content: space-evenly; /* 均等に配置 */
-          background-color: #f0f4f8; /* タブの背景色 */
-          padding: 10px 0;
+            display: flex;
+            justify-content: space-evenly; /* 均等に配置 */
+            background-color: #f0f4f8; /* タブの背景色 */
+            padding: 10px 0;
         }
 
         .tab {
-          flex: 1; /* 横幅いっぱいに広げる */
-          text-align: center;
-          padding: 15px;
-          font-size: 18px;
-          cursor: pointer;
-          background-color: #0056b3;
-          color: white;
-          transition: background-color 0.3s;
+            flex: 1; /* 横幅いっぱいに広げる */
+            text-align: center;
+            padding: 15px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #0056b3;
+            color: white;
+            transition: background-color 0.3s;
         }
 
         .tab.active {
-          background-color: #10a515;
+            background-color: #10a515;
         }
 
         .tab[data-url="custom-index.html"] {
-          background-color: red; /* カスタムCSV変換の色を赤に */
+            background-color: red; /* カスタムCSV変換の色を赤に */
         }
 
         .tab[data-url="custom-index.html"].active {
-          background-color: darkred; /* カスタムCSV変換のアクティブ時の色を濃い赤に */
+            background-color: darkred; /* カスタムCSV変換のアクティブ時の色を濃い赤に */
+        }
+
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none; /* 初期状態は非表示 */
         }
     </style>
 </head>
@@ -163,14 +187,59 @@
     <main>
         <!-- タブメニュー -->
         <div class="tabs">
-          <div class="tab active" data-tab="sample" data-url="index.html">サンプルCSV変換</div>
-          <div class="tab" data-url="custom-index.html">カスタムCSV変換</div>
+            <div class="tab active" data-tab="sample" data-url="index.html">サンプルCSV変換</div>
+            <div class="tab" data-url="custom-index.html">カスタムCSV変換</div>
         </div>
 
         <!-- サンプルCSV変換タブ内容 -->
         <div id="sample" class="tab-content active">
-            <a id="rdd-format-link" href="https://docs.google.com/spreadsheets/d/1AXVg4XjH29HAD4s9mgJJ-_7WFBCtXn3tweTK68ERBaI/edit?usp=sharing" target="_blank">定義書フォーマット(Google スプレッドシート)</a>
-            <input type="file" id="file-input" accept=".csv">
+            <!-- テーブルの追加 -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>項目名</th>
+                        <th>行</th>
+                        <th>列</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>構造体名のセルの位置</td>
+                        <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
+                        <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
+                    </tr>
+                    <tr>
+                        <td>構造体詳細のセルの位置</td>
+                        <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
+                        <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
+                    </tr>
+                    <tr>
+                        <td>論理名のセルの開始位置</td>
+                        <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
+                        <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
+                    </tr>
+                    <tr>
+                        <td>物理名のセルの開始位置</td>
+                        <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
+                        <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
+                    </tr>
+                    <tr>
+                        <td>型のセルの開始位置</td>
+                        <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
+                        <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
+                    </tr>
+                    <tr>
+                        <td>詳細のセルの開始位置</td>
+                        <td><input type="number" min="1" placeholder="行番号" class="cell-input"></td>
+                        <td><input type="number" min="1" placeholder="列番号" class="cell-input"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div id="param-message" style="display:none; color: red; text-align: center;">
+              上記のパラメータを入力してください
+            </div>
+            <input type="file" id="file-input" accept=".csv" style="display:none;">
   
             <div id="radio-buttons-container">
                 <label><input type="radio" name="impl-option" value="include" checked> 構造体 + コンストラクタ</label>
@@ -191,7 +260,7 @@
 
     <script>
       const tabs = document.querySelectorAll('.tab');
-
+  
       tabs.forEach(tab => {
           tab.addEventListener('click', () => {
               if (tab.dataset.url) {
@@ -201,16 +270,69 @@
                   // 通常のタブ切り替え処理
                   tabs.forEach(t => t.classList.remove('active'));
                   tab.classList.add('active');
-      
+          
                   document.querySelectorAll('.tab-content').forEach(content => {
                       content.classList.remove('active');
                   });
-      
+          
                   const activeContent = document.getElementById(tab.dataset.tab);
                   activeContent.classList.add('active');
               }
           });
-      });      
-    </script>
+      });
+  
+      // 入力欄の値をURLパラメータに追加する関数
+      function updateUrlParameters() {
+          const params = new URLSearchParams();
+          const rows = document.querySelectorAll('tbody tr');
+          let hasRequiredParams = true;
+  
+          rows.forEach((row, index) => {
+              const inputs = row.querySelectorAll('input[type="number"]');
+              if (inputs.length === 2) {
+                  const rowNumber = inputs[0].value;
+                  const columnNumber = inputs[1].value;
+                  const paramName = [
+                      'struct_name_position',
+                      'struct_detail_position',
+                      'logical_name_position',
+                      'physical_name_position',
+                      'type_position',
+                      'detail_position'
+                  ][index];
+  
+                  // 必須パラメータがすべて入力されているかチェック
+                  if (['struct_name_position', 'logical_name_position', 'physical_name_position', 'type_position'].includes(paramName) && (!rowNumber || !columnNumber)) {
+                      hasRequiredParams = false;
+                  }
+  
+                  if (rowNumber && columnNumber) {
+                      params.set(paramName, `${rowNumber}-${columnNumber}`);
+                  }
+              }
+          });
+  
+          // URLを更新
+          window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
+  
+          // ファイル選択ボタンの表示制御
+          const fileInput = document.getElementById('file-input');
+          const message = document.getElementById('param-message');
+          
+          if (hasRequiredParams) {
+              fileInput.style.display = 'block';
+              message.style.display = 'none';
+          } else {
+              fileInput.style.display = 'none';
+              message.style.display = 'block';
+          }
+      }
+  
+      // 入力欄の変更イベントリスナーを追加
+      const numberInputs = document.querySelectorAll('input[type="number"]');
+      numberInputs.forEach(input => {
+          input.addEventListener('input', updateUrlParameters);
+      });
+  </script>  
 </body>
 </html>
