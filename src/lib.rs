@@ -170,11 +170,17 @@ pub fn generate_struct_from_custom_csv (
     struct_code.push_str(&format!("/// {}\n", struct_detail));
     struct_code.push_str(&format!("#[derive(Debug)]\nstruct {} {{\n", struct_name));
 
+    // Argumentsセクションの追加
+    struct_code.push_str("    /// # Fields\n");
+
     // フィールド情報をもとに構造体のフィールドを追加
-    for (logical_name, physical_name, field_type, detail) in izip!(&logical_names, &physical_names, &types, &details) {
-        struct_code.push_str(&format!("    /// * {}({}) - {}\n", physical_name, logical_name, detail));
-        struct_code.push_str(&format!("    {}: {},\n", physical_name, field_type));
+    for (logical_name, physical_name, detail) in izip!(&logical_names, &physical_names, &details) {
+      struct_code.push_str(&format!("    /// * {}({}) - {}\n", physical_name, logical_name, detail));
     }
+    for (physical_name, field_type) in izip!(&physical_names, &types) {
+      struct_code.push_str(&format!("    {}: {},\n", physical_name, field_type));
+    }
+
     struct_code.push_str("}\n");
 
     // `impl` ブロックを追加 (必要なら)
