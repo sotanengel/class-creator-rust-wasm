@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="./css/prism.css">
     <link rel="stylesheet" href="./css/styles.css">
     <script src="./js/prism.js" defer></script>
-    <script src="./index.js" type="module"></script>
+    <script src="./custom-index.js" type="module"></script>
 
     <title>定義書RustコードコンバータWASM</title>
     <meta name="description" content="システム定義書からRustの構造体を自動生成するサイトです。このページではご自身の任意のCSVフォーマットから定義書を作成することgできます。" />
@@ -38,7 +38,7 @@
         <div id="sample" class="tab-content active">
 
           <div id="fukidashi" style="display:none; position: relative;">
-            このURLをお気に入り登録すると次回以降開始位置の入力が省略できます👀
+            このURLをブックマークすると次回以降開始位置の入力が省略できます👀
           </div>
 
             <!-- テーブルの追加 -->
@@ -103,6 +103,17 @@
             <pre id="code-block"><code id="output" class="language-rust"></code></pre>
             <a id="download-btn" href="#" download="struct_output.txt">生成コードのダウンロード!</a>
         </div>
+
+        <!-- 使い方の折りたたみメニュー -->
+        <button class="collapsible">使い方</button>
+        <div class="content">
+            <p>1. ご自身で定義書CSVを用意します。(※構造体名・論理名・物理名・型は必ず用意してください。)</p><img src="img/example-custom-csv.png" width="600">
+            <p>2. 開始位置を以下の例を参考に記載します。(※全て記入した状態でブックマークすると設定が保存できます！)</p><img src="img/example-custom-csv-mapping.png" width="600"><br><img src="img/example-custom-csv-input.png" width="1000">
+            <p>3. ファイルを選択ボタンから書き換えたファイルを選択します。</p>
+            <p>4. 「生成コードのダウンロード」ボタンを押して、構造体コードを保存します。(構造体のみで良い場合には「構造体のみ」を選択し、再出力ボタンを押してください)</p>
+            <img src="img/example-custom-converted-page-image.png" width="600">
+        </div>
+    </div>
     </main>
     <footer>
         <p>
@@ -198,18 +209,20 @@
           const rows = document.querySelectorAll('tbody tr');
           const changedRowIndex = Array.from(rows).findIndex(row => row.querySelector('input[type="number"]') === changedInput);
 
-          // 論理名、物理名、型、詳細の開始位置の行インデックス
-          const syncedIndices = [2, 3, 4]; // それぞれの行番号
+          // 論理名、物理名、型情報の開始位置の行インデックス
+          const syncedIndices = [2, 3, 4]; // 論理名、物理名、型情報の行番号
 
-          // 変更された行の行番号を取得
-          const newValue = changedInput.value;
+          // 変更された行が論理名、物理名、型情報のいずれかの場合のみ処理
+          if (syncedIndices.includes(changedRowIndex)) {
+              const newValue = changedInput.value; // 変更された新しい値
 
-          // 同期が必要な行を更新
-          syncedIndices.forEach(index => {
-              const row = rows[index];
-              const inputs = row.querySelectorAll('input[type="number"]');
-              inputs[0].value = newValue; // 行番号を更新
-          });
+              // 同期が必要な行を更新
+              syncedIndices.forEach(index => {
+                  const row = rows[index];
+                  const inputs = row.querySelectorAll('input[type="number"]');
+                  inputs[0].value = newValue; // 行番号を更新
+              });
+          }
       }
     
       // ページ読み込み時にURLパラメータから入力欄を設定する関数
@@ -282,6 +295,20 @@
     // ページが読み込まれたときにフッターを読み込む
     document.addEventListener('DOMContentLoaded', () => {
         loadFooter();
+    });
+
+    // 折りたたみメニューの動作
+    const collapsibles = document.querySelectorAll('.collapsible');
+    collapsibles.forEach(collapsible => {
+        collapsible.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
     });
     </script> 
 </body>
