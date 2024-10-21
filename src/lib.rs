@@ -145,15 +145,18 @@ pub fn generate_struct_from_custom_csv (
     type_position: Position,
     detail_position: Position,
 ) -> String {
-    let mut rdr = ReaderBuilder::new()
-        .has_headers(false)
-        .from_reader(csv_data.as_bytes());
-
     let mut struct_code = String::new();
 
     // 構造体名と詳細を取得
-    let struct_name = get_paticular_position_cell_value_from_csv(&mut rdr, &struct_name_position);
-    let struct_detail = get_paticular_position_cell_value_from_csv(&mut rdr, &struct_detail_position);
+    // 各取得操作のたびにリーダーを作成する
+    let struct_name = get_paticular_position_cell_value_from_csv(
+        &mut csv::ReaderBuilder::new().has_headers(false).from_reader(csv_data.as_bytes()), 
+        &struct_name_position
+    );
+    let struct_detail = get_paticular_position_cell_value_from_csv(
+        &mut csv::ReaderBuilder::new().has_headers(false).from_reader(csv_data.as_bytes()), 
+        &struct_detail_position
+    );
     console_log!("struct_detail_position: {}", &struct_name_position);
     console_log!("struct_name: {}", &struct_name);
     console_log!("struct_detail_position: {}", &struct_detail_position);
@@ -223,11 +226,6 @@ pub fn get_paticular_position_cell_value_from_csv<R: std::io::Read>(
       }
 
       // 指定された行に到達したら
-      if let Some(value) = record.get(position.column) {
-        return value.to_string();
-      }
-      
-
       if current_row == position.row {
           // 指定された列の値を取得
           if let Some(value) = record.get(position.column) {
