@@ -205,3 +205,46 @@ th {
   rotate: 135deg;
   translate: -50%;
 }
+
+.collapsible {
+  width: 100%; /* 横幅いっぱいに広げる */
+  background-color: #f1f1f1;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  text-align: left;
+  border: 2px solid #ccc; /* 枠線を追加 */
+  outline: none;
+  font-size: 15px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between; /* アイコンとテキストの間にスペースを作る */
+  align-items: center;
+}
+
+.collapsible::after {
+  content: '▼'; /* 初期は下向きの山マーク */
+  font-size: 12px;
+  color: #444;
+  margin-left: 10px;
+}
+
+.collapsible.active::after {
+  content: '▲'; /* 開いたときに上向きの山マーク */
+}
+
+.content {
+  width: 100%;
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f9f9f9;
+  border-left: 2px solid #ccc; /* 枠線 */
+  border-right: 2px solid #ccc; /* 枠線 */
+  border-bottom: 2px solid #ccc; /* 枠線 */
+  margin-top: 0;
+}
+
+.content p {
+  margin: 10px 0;
+}

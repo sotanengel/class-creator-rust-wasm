@@ -48,6 +48,16 @@
   
             <pre id="code-block"><code id="output" class="language-rust"></code></pre>
             <a id="download-btn" href="#" download="struct_output.txt">生成コードのダウンロード!</a>
+
+            <!-- 使い方の折りたたみメニュー -->
+            <button class="collapsible">使い方</button>
+            <div class="content">
+                <p>1. <a href="https://docs.google.com/spreadsheets/d/1AXVg4XjH29HAD4s9mgJJ-_7WFBCtXn3tweTK68ERBaI/edit?usp=sharing" target="_blank">サンプルCSV(Google スプレッドシート)</a>をダウンロードします。</p>
+                <p>2. ダウンロードしたCSVファイルを書き換えます。</p><img src="img/example-sample-csv.png" width="600">
+                <p>3. ファイルを選択ボタンから書き換えたファイルを選択します。</p>
+                <p>4. 「生成コードのダウンロード」ボタンを押して、構造体コードを保存します。(構造体のみで良い場合には「構造体のみ」を選択し、再出力ボタンを押してください)</p>
+                <img src="img/example-converted-page-image.png" width="600">
+            </div>
         </div>
     </main>
     <footer>
@@ -93,6 +103,20 @@
     // ページが読み込まれたときにフッターを読み込む
     document.addEventListener('DOMContentLoaded', () => {
         loadFooter();
+    });
+
+    // 折りたたみメニューの動作
+    const collapsibles = document.querySelectorAll('.collapsible');
+    collapsibles.forEach(collapsible => {
+        collapsible.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
     });
     </script>
 </body>
