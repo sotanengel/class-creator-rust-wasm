@@ -13,8 +13,27 @@ header {
   background-color: #0056b3;
   color: white;
   padding: 15px 20px;
+  position: relative; /* 相対位置指定を追加 */
   margin-bottom: 20px;
 }
+
+header h1 {
+  text-align: center;
+  margin: 0;
+}
+
+header a {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+}
+
+header a img {
+  width: 40px;
+  height: 40px;
+}
+
 
 h1 {
   text-align: center;
