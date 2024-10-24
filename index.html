@@ -51,8 +51,11 @@
         <!-- サンプルCSV変換タブ内容 -->
         <div id="sample" class="tab-content active">
             <a id="rdd-format-link" href="https://docs.google.com/spreadsheets/d/1AXVg4XjH29HAD4s9mgJJ-_7WFBCtXn3tweTK68ERBaI/edit?usp=sharing" target="_blank">定義書フォーマット(Google スプレッドシート)</a>
-            <input type="file" id="file-input" accept=".csv">
-  
+            <div id="drop-zone" class="drop-zone">
+              <p>ここにCSVファイルをドロップするか、下のボタンから選択してください</p>
+              <input type="file" id="file-input" accept=".csv">
+            </div>
+            
             <div id="radio-buttons-container">
                 <label><input type="radio" name="impl-option" value="include" checked> 構造体 + コンストラクタ</label>
                 <label><input type="radio" name="impl-option" value="struct-only"> 構造体のみ</label>
@@ -78,6 +81,8 @@
 
     <script>
       const tabs = document.querySelectorAll('.tab');
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
 
       tabs.forEach(tab => {
           tab.addEventListener('click', () => {
@@ -126,6 +131,49 @@
                 content.style.display = "block";
             }
         });
+    });
+
+    // ドラッグオーバー時のスタイル変更
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+
+    // ファイルがドロップされた時の処理
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length) {
+            const file = files[0];
+            if (file.type === 'text/csv') {
+                // ファイルをfileInputに反映させる
+                fileInput.files = e.dataTransfer.files;
+
+                // fileInputのchangeイベントをトリガーする
+                const changeEvent = new Event('change');
+                fileInput.dispatchEvent(changeEvent);
+            } else {
+                alert('CSVファイルをドロップしてください');
+            }
+        }
+    });
+
+    // ファイル選択ボタンから選択された時の処理
+    fileInput.addEventListener('change', async function() {
+        const reader = new FileReader();
+
+        reader.onload = async function(e) {
+            csvContent = e.target.result;
+            await generateStruct(); // 構造体生成関数を呼び出す
+        };
+
+        reader.readAsText(this.files[0]);
     });
     </script>
 </body>

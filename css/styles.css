@@ -267,3 +267,22 @@ th {
 .content p {
   margin: 10px 0;
 }
+
+.drop-zone {
+  width: 100%;
+  height: 200px;
+  padding: 20px;
+  border: solid 1px #434343;
+  background-color: #f1ededa5;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.drop-zone.dragover {
+  background-color: #add0f2;
+}
+
+input[type="file"] {
+  display: none;
+}

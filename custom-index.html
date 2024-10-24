@@ -95,9 +95,14 @@
 
             <div id="fukidashi" style="display:none; position: relative;">
               今、URLをお気に入りすると次回以降セル情報の省略できます👀
-            </div>      
+            </div>
     
-            <input type="file" id="file-input" accept=".csv" style="display:none;">
+            <div id="drop-zone" class="drop-zone" style="display: none;">
+              <div id="csv-message" style="display: none; text-align: center;">
+                CSVファイルをドロップするか、下のボタンから選択してください
+              </div>
+              <input type="file" id="file-input" accept=".csv">
+            </div>
   
             <div id="radio-buttons-container">
               <label><input type="radio" name="impl-option" value="include" checked> 構造体 + コンストラクタ</label>
@@ -125,6 +130,8 @@
 
     <script>
       const tabs = document.querySelectorAll('.tab');
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
     
       tabs.forEach(tab => {
           tab.addEventListener('click', () => {
@@ -184,15 +191,24 @@
           const fileInput = document.getElementById('file-input');
           const message = document.getElementById('param-message');
           const favoriteMessage = document.getElementById('fukidashi');
+          const inputmessage = document.getElementById('csv-message');
     
           if (hasRequiredParams) {
               fileInput.style.display = 'block';
               message.style.display = 'none';
               favoriteMessage.style.display = 'block'; // 吹き出しメッセージを表示
+              inputmessage.style.display = 'block'; // CSVメッセージを表示
+              document.getElementById('drop-zone').style.display = 'block';
+              document.getElementById('drop-zone').addEventListener('dragover', (event) => {
+                event.preventDefault(); // デフォルトの動作を無効化
+              });
           } else {
               fileInput.style.display = 'none';
               message.style.display = 'block';
               favoriteMessage.style.display = 'none'; // 吹き出しメッセージを非表示
+              inputmessage.style.display = 'none'; // CSVメッセージを隠す
+              document.getElementById('drop-zone').style.display = 'none';
+              document.getElementById('drop-zone').removeEventListener('drop', handleDrop); // ドロップイベントを削除
           }
       }
     
@@ -263,15 +279,24 @@
           const fileInput = document.getElementById('file-input');
           const message = document.getElementById('param-message');
           const favoriteMessage = document.getElementById('fukidashi');
+          const inputmessage = document.getElementById('csv-message');
     
           if (hasRequiredParams) {
               fileInput.style.display = 'block';
               message.style.display = 'none';
               favoriteMessage.style.display = 'block'; // 吹き出しメッセージを表示
+              inputmessage.style.display = 'block'; // CSVメッセージを表示
+              document.getElementById('drop-zone').style.display = 'block';
+              document.getElementById('drop-zone').addEventListener('dragover', (event) => {
+                event.preventDefault(); // デフォルトの動作を無効化
+              });
           } else {
               fileInput.style.display = 'none';
               message.style.display = 'block';
               favoriteMessage.style.display = 'none'; // 吹き出しメッセージを非表示
+              inputmessage.style.display = 'none'; // CSVメッセージを隠す
+              document.getElementById('drop-zone').style.display = 'none';
+              document.getElementById('drop-zone').removeEventListener('drop', handleDrop); // ドロップイベントを削除
           }
     
           // URLを更新
@@ -310,6 +335,49 @@
                 content.style.display = "block";
             }
         });
+    });
+
+    // ドラッグオーバー時のスタイル変更
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+
+    // ファイルがドロップされた時の処理
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length) {
+            const file = files[0];
+            if (file.type === 'text/csv') {
+                // ファイルをfileInputに反映させる
+                fileInput.files = e.dataTransfer.files;
+
+                // fileInputのchangeイベントをトリガーする
+                const changeEvent = new Event('change');
+                fileInput.dispatchEvent(changeEvent);
+            } else {
+                alert('CSVファイルをドロップしてください');
+            }
+        }
+    });
+
+    // ファイル選択ボタンから選択された時の処理
+    fileInput.addEventListener('change', async function() {
+        const reader = new FileReader();
+
+        reader.onload = async function(e) {
+            csvContent = e.target.result;
+            await generateStruct(); // 構造体生成関数を呼び出す
+        };
+
+        reader.readAsText(this.files[0]);
     });
     </script> 
 </body>
