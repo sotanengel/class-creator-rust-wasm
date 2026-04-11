@@ -1,0 +1,12 @@
+name: Takumi Guard
+on: [push, pull_request]
+jobs:
+  npm-supply-chain-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - uses: flatt-security/setup-takumi-guard-npm@v1
+      - name: Install and scan npm dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; elif [ -f package.json ]; then npm install; fi
